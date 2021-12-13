@@ -30,8 +30,14 @@ proc download*(url, dist: string) =
 
 proc untar*(src, dist: string) =
   when hostOS == "windows":
-    # "-C" option has a bug and cause error.
-    execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
+    # Windows 10 has bsdtar but it doesn't have --force-local option.
+    # tar in busybox also doesn't have --force-local option.
+    let output = execAndReturnQuote(["tar", "--version"])
+    if output.output.find("tar (GNU tar)"):
+      # "-C" option has a bug and cause error.
+      execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
+    else:
+      execQuote(["tar", "--no-same-owner", "-x", "-f", src], dist)
   else:
     execQuote(["tar", "x", "-C", dist, "-f", src])
 
