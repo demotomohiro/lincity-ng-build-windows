@@ -1,0 +1,12 @@
+on: push
+jobs:
+  run-script-to-build-lincity-ng
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jiro4989/setup-nim-action@v1
+      - run: nim lincity_ng_build_cmake.nims --archive
+      - uses: actions/upload-artifact@v2
+        with:
+          name: lincity-ng-package
+          path: lincity-ng.zip
