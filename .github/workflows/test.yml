@@ -1,6 +1,6 @@
 on: push
 jobs:
-  run-script-to-build-lincity-ng
+  run-script-to-build-lincity-ng:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
