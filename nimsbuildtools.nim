@@ -21,10 +21,12 @@ proc execAndReturnQuote*(args: openArray[string]; workingDir: string = ""): tupl
 proc download*(url, dist: string) =
   if findExe("nimgrab") != "":
     execQuote(["nimgrab", url, dist])
+  elif findExe("curl") != "":
+    execQuote(["curl", "--location", "--silent", "--show-error", "-o", dist, url])
   elif findExe("wget") != "":
     execQuote(["wget", url, "-O", dist])
   else:
-    quit "This script requires nimgrab or wget to download a file"
+    quit "This script requires nimgrab, curl or wget to download a file"
 
 proc untar*(src, dist: string) =
   when hostOS == "windows":
@@ -41,8 +43,8 @@ template downloadAnd*(un: proc; url, tmp, dist: string) =
   un(tmp, dist)
 
 proc checkRequiredCmds*(): bool =
-  if findExe("wget") == "" and findExe("nimgrab") == "":
-    echo "This script needs wget or nimgrab command"
+  if findExe("wget") == "" and findExe("curl") == "" and findExe("nimgrab") == "":
+    echo "This script needs nimgrab, curl or wget command"
     return false
 
   if system.findExe("tar") == "":
