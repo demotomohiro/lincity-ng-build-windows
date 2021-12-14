@@ -36,8 +36,15 @@ proc untar*(src, dist: string) =
     if output.output.find("tar (GNU tar)") >= 0:
       # "-C" option has a bug and cause error.
       execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
-    else:
+    elif output.output.find("libarchive") < 0:
       execQuote(["tar", "--no-same-owner", "-x", "-f", src], dist)
+    elif findExe("7z") != "":
+      # libarchive's tar freeze when trying to extract msys2-base.tar.xz.
+      # And it is installed in windows10.
+      execQuote(["7z", "x", src, "-o" & src.parentDir])
+      execQuote(["7z", "x", src.changeFileExt(""), "-o" & dist])
+    else:
+      quit "This script requires tar or 7z, not libarchive's tar"
   else:
     execQuote(["tar", "x", "-C", dist, "-f", src])
 
