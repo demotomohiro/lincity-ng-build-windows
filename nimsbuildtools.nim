@@ -33,7 +33,7 @@ proc untar*(src, dist: string) =
     # Windows 10 has bsdtar but it doesn't have --force-local option.
     # tar in busybox also doesn't have --force-local option.
     let output = execAndReturnQuote(["tar", "--version"])
-    if output.output.find("tar (GNU tar)"):
+    if output.output.find("tar (GNU tar)") >= 0:
       # "-C" option has a bug and cause error.
       execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
     else:
