@@ -8,7 +8,7 @@ jobs:
       - run: nim lincity_ng_build_cmake.nims --archive
       - name: Upload archive
         if: ${{ github.event_name == 'push' }}
-        - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
           with:
             name: lincity-ng-package
             path: lincity-ng.zip
