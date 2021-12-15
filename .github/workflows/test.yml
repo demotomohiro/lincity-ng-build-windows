@@ -9,9 +9,9 @@ jobs:
       - name: Upload archive
         if: ${{ github.event_name == 'push' }}
         uses: actions/upload-artifact@v2
-          with:
-            name: lincity-ng-package
-            path: lincity-ng.zip
+        with:
+          name: lincity-ng-package
+          path: lincity-ng.zip
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secret.GITHUB_TOKEN }}
