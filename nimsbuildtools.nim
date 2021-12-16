@@ -30,17 +30,20 @@ proc download*(url, dist: string) =
 
 proc untar*(src, dist: string) =
   when hostOS == "windows":
-    # Windows 10 has bsdtar but it doesn't have --force-local option.
-    # tar in busybox also doesn't have --force-local option.
-    let output = execAndReturnQuote(["tar", "--version"])
-    if output.output.find("tar (GNU tar)") >= 0:
-      # "-C" option has a bug and cause error.
-      execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
-    elif output.output.find("libarchive") < 0:
-      execQuote(["tar", "--no-same-owner", "-x", "-f", src], dist)
+    # libarchive's tar freeze when trying to extract msys2-base.tar.xz.
+    # And it is installed in windows10.
+    let
+      hasTar = findExe("tar") != ""
+      tarVer = if hasTar: execAndReturnQuote(["tar", "--version"]).output else: ""
+      useTar = if hasTar: tarVer.find("libarchive") < 0 else: false
+    if useTar:
+      # tar in busybox doesn't have --force-local option.
+      if tarVer.find("tar (GNU tar)") >= 0:
+        # "-C" option has a bug and cause error.
+        execQuote(["tar", "--force-local", "--no-same-owner", "-x", "-f", src], dist)
+      else:
+        execQuote(["tar", "--no-same-owner", "-x", "-f", src], dist)
     elif findExe("7z") != "":
-      # libarchive's tar freeze when trying to extract msys2-base.tar.xz.
-      # And it is installed in windows10.
       execQuote(["7z", "x", src, "-o" & src.parentDir])
       execQuote(["7z", "x", src.changeFileExt(""), "-o" & dist])
     else:
