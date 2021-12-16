@@ -23,3 +23,7 @@ nim lincity-ng-build-windows\lincity_ng_build_cmake.nims
 In default, it downloads MSYS2 to current directory, creates lincity-ng directory in current directory and put lincity-ng.exe in it.
 You can specify where lincity-ng directory is created with `--rootdir:<pathTodirectory>` option.
 You can specify download directory with `--downloaddir:<pathTodirectory>` option.
+
+## etc
+If menu screen doesn't display font correctly, open `c:\Users\<username>\.lincity-ng\userconfig.xml`
+and change `language="autodetect"` to `language="en"` to force lincity-ng to display english language.
